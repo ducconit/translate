@@ -1,5 +1,7 @@
 <?php
 
+use DNT\Translate\Middleware\BindingLocale;
+
 return [
     /**
      * Sao chép các route sang các vùng khác
@@ -8,13 +10,16 @@ return [
      * index, vi.index, en.index, jp.index
      * Mặc định sẽ không tạo ra các router này
      */
-    'locale_route' => false,
+    'locale_route' => true,
 
     /**
      * Các vùng hỗ trợ
      */
     'supports' => [
         'en',
-        'vi',
+        'vi'
+    ],
+    'middleware' => [
+        BindingLocale::class
     ]
 ];

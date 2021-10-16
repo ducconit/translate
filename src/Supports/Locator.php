@@ -26,13 +26,13 @@ class Locator implements LocatorContract
     public function __construct(Container $container)
     {
         $this->container = $container;
-        $this->supports = $this->getLocaleSupport();
+        $this->resolveLocaleSupport();
         $this->resolveLocale();
     }
 
-    public function getLocaleSupport(): array
+    protected function resolveLocaleSupport()
     {
-        return $this->container->make('config')['localization.supports'];
+        $this->supports = $this->container->make('config')['localization.supports'];
     }
 
     protected function resolveLocale()
@@ -44,7 +44,14 @@ class Locator implements LocatorContract
             return;
         }
 
-        $this->setLocale($this->getLocaleSession());
+        $localeSession = $this->getLocaleSession();
+
+        if ($localeSession) {
+            $this->setLocale($localeSession);
+            return;
+        }
+
+        $this->locale = $this->container->getLocale();
     }
 
     public function getLocaleUrl(): ?string
@@ -54,16 +61,31 @@ class Locator implements LocatorContract
         return $this->checkLocale($locale) ? $locale : null;
     }
 
-    public function checkLocale(?string $locale): bool
+    public function checkLocale(?string $locale, $strict = true): bool
     {
-        return in_array($locale, $this->supports, true);
+        return in_array($locale, $this->supports, $strict);
     }
 
     public function getLocaleSession(): ?string
     {
-        $locale = $this->container->make('session')->get('locale');
+        $locale = $this->container->make('session')->get($this->getNameSession());
 
         return $this->checkLocale($locale) ? $locale : null;
+    }
+
+    protected function getNameSession(): string
+    {
+        return 'locale';
+    }
+
+    public function getLocaleSupport(): array
+    {
+        return $this->supports;
+    }
+
+    public function getLocaleSupportDiffCurrent(): array
+    {
+        return array_diff($this->supports, [$this->getLocale()]);
     }
 
     public function getLocale(): ?string
@@ -71,14 +93,27 @@ class Locator implements LocatorContract
         return $this->locale;
     }
 
-    public function setLocale(?string $locale, $global = false)
+    public function setLocale(?string $locale, $force = false)
     {
+        if (!$locale) {
+            return;
+        }
         if (!$this->checkLocale($locale)) {
             return;
         }
         $this->locale = $locale;
-        if ($global) {
+        if ($force) {
             $this->container->setLocale($locale);
         }
+    }
+
+    public function setLocaleToSession(?string $locale)
+    {
+        $this->container->make('session')->put($this->getNameSession(), $locale);
+    }
+
+    public function getMiddlewares()
+    {
+        return $this->container->make('config')['localization.middleware'];
     }
 }
