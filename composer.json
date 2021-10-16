@@ -1,0 +1,26 @@
+{
+    "name": "dnt/translate",
+    "type": "module",
+    "autoload": {
+        "psr-4": {
+            "DNT\\Translate\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "ducnt",
+            "email": "ducnt@sphoton.com"
+        }
+    ],
+    "require": {
+        "php": "^7.3|^8.0",
+        "laravel/framework": "^8.54"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "DNT\\Translate\\TranslateServiceProvider"
+            ]
+        }
+    }
+}
