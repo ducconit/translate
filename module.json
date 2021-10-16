@@ -1,0 +1,10 @@
+{
+    "name": "Translate",
+    "author": {
+        "name": "Trung Đức(DNT)",
+        "email": "ducnt@sphoton.com"
+    },
+    "providers": [
+        "DNT\\Translate\\TranslateServiceProvider"
+    ]
+}
