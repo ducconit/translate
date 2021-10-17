@@ -2,6 +2,10 @@
 
 *Coded by Trung Đức(DNT)*
 
+### Install
+`composer require dnt/translate`
+
+
 ### Start
 
  Các route sử dụng đa ngôn ngữ phải được đặt trong Closure function của method localization

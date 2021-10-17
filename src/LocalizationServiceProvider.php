@@ -9,12 +9,14 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
+use RuntimeException;
+use Throwable;
 
 class LocalizationServiceProvider extends ServiceProvider
 {
     /**
      * @throws BindingResolutionException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function register()
     {
@@ -26,13 +28,13 @@ class LocalizationServiceProvider extends ServiceProvider
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      * @throws BindingResolutionException
      */
     private function configuration()
     {
         $this->mergeConfigFrom($this->getConfigPath(), 'localization');
-        $this->loadTranslationsFrom($this->getLangPath(),'localization');
+        $this->loadTranslationsFrom($this->getLangPath(), 'localization');
         $this->resolveLocalizationSupport();
     }
 
@@ -47,7 +49,7 @@ class LocalizationServiceProvider extends ServiceProvider
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      * @throws BindingResolutionException
      */
     private function resolveLocalizationSupport()
@@ -56,7 +58,7 @@ class LocalizationServiceProvider extends ServiceProvider
         /**
          * Validate Array
          */
-        throw_unless(is_array($config['localization.supports']), \RuntimeException::class, 'Localization support must be array');
+        throw_unless(is_array($config['localization.supports']), RuntimeException::class, 'Localization support must be array');
 
         /**
          * Check Locale Support
@@ -69,17 +71,28 @@ class LocalizationServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishFile();
+
         Route::mixin(new LocalizationRouter());
-        Validator::extend('locale',function($app,$t){
-            dd($app,$t);
-        });
+
+        $this->customValidator();
     }
 
     private function publishFile()
     {
         $this->publishes([
-            __DIR__.'/lang' => resource_path('lang/vendor/localization'),
-            __DIR__.'/config' => base_path('config'),
-        ]);
+            __DIR__ . '/lang' => resource_path('lang/vendor/localization'),
+        ], 'localization-lang');
+
+        $this->publishes([
+            __DIR__ . '/config' => base_path('config')
+        ], 'localization-config');
+    }
+
+    private function customValidator()
+    {
+        Validator::extend('locale', function ($attribute, $value, $params) {
+            $localeSupport = array_diff($this->app->make(Contract::class)->getLocaleSupport(), $params);
+            return in_array($value, $localeSupport);
+        }, __('localization::locator.localeNotSupport'));
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 return [
-    "changeLocaleSuccess"=> "Thay đổi ngôn ngữ thành công!",
-    "changeLocaleFail"=> "Thay đổi ngôn ngữ thất bại!"
+    "changeLocaleSuccess"=> "Thay đổi vùng thành công!",
+    "changeLocaleFail"=> "Thay đổi vùng thất bại!",
+    "localeNotSupport" => "Vùng không được hỗ trợ!"
 ];
