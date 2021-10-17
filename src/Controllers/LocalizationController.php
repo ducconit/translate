@@ -16,7 +16,7 @@ class LocalizationController extends Controller
     {
         try {
             $locale = $locale ?: app(Locator::class)->getLocaleSupportDiffCurrent()[0];
-            app(ChangeLocale::class)->setLocale($locale,true);
+            app(ChangeLocale::class)->setLocale($locale);
         } catch (RuntimeException $exception) {
             return back()->with('error', __('localization::locator.changeLocaleFail'));
         }

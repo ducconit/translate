@@ -14,7 +14,7 @@ class ChangeLocale
         $this->locator = $locator;
     }
 
-    public function setLocale(?string $locale,$force = false)
+    public function setLocale(?string $locale,$force = true)
     {
         $this->locator->setLocale($locale,$force);
         $this->locator->setLocaleToSession($locale);

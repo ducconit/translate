@@ -5,6 +5,7 @@ namespace DNT\Translate\Supports;
 use Closure;
 use DNT\Translate\Contracts\Locator as LocatorContract;
 use DNT\Translate\Controllers\LocalizationController;
+use DNT\Translate\Middleware\BindingLocale;
 use Illuminate\Support\Facades\Route;
 
 class Router
@@ -18,11 +19,17 @@ class Router
         return function (Closure $callback, $attributes = []) {
             $container = $this->container;
             $locator = $container->make(LocatorContract::class);
-            $attributes['middleware'] = array_merge($attributes['middleware']??[],$locator->getMiddlewares());
+
+            if ($attributes['use-locale-middleware'] ?? true) {
+                $attributes['middleware'] = array_merge($attributes['middleware'] ?? [], [BindingLocale::class]);
+            }
+            $attributes['middleware'] = array_merge($attributes['middleware'] ?? [], $locator->getMiddlewares());
 
             $this->group($attributes, $callback);
 
-            if ($container->make('config')['localization.locale_route']) {
+            $renderRouteLocale = $attributes['route-name-locale'] ?? $container->make('config')['localization.route-name-locale'];
+
+            if ($renderRouteLocale) {
                 foreach ($locator->getLocaleSupport() as $locale) {
                     $attributes['prefix'] = $locale;
                     $attributes['as'] = $locale . '.';
@@ -42,7 +49,9 @@ class Router
     public function frontend()
     {
         return function ($option = []) {
-            $this->get('change-locale/{locale?}',[LocalizationController::class,'changeLocale'])->name('changeLocale');
+            if ($option['use-route-change-locale'] ?? true) {
+                $this->get('change-locale/{locale?}', [LocalizationController::class, 'changeLocale'])->name('changeLocale');
+            }
         };
     }
 }

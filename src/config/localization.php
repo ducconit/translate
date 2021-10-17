@@ -1,7 +1,5 @@
 <?php
 
-use DNT\Translate\Middleware\BindingLocale;
-
 return [
     /**
      * Sao chép các route sang các vùng khác
@@ -10,7 +8,26 @@ return [
      * index, vi.index, en.index, jp.index
      * Mặc định sẽ không tạo ra các router này
      */
-    'locale_route' => true,
+    'route-name-locale' => false,
+
+    /**
+     * Route thay đổi vùng mặc định
+     *
+     * Uri: change-locale/{locale?}
+     * Name: changeLocale
+     */
+    'use-route-change-locale' => true,
+
+    /**
+     * Tự động chuyển vùng khi phát hiện vùng trên url hoặc trong session
+     *
+     * ex: domain/vi/dashboard     =>   locale: vi
+     *
+     * ex2: domain/en/dashboard    =>   locale: en
+     *
+     * ex3: domain/dashboard       =>   locale: default(en)
+     */
+    'use-locale-middleware' => true,
 
     /**
      * Các vùng hỗ trợ
@@ -19,7 +36,9 @@ return [
         'en',
         'vi'
     ],
-    'middleware' => [
-        BindingLocale::class
-    ]
+
+    /**
+     * Danh sách middleware đi kèm
+     */
+    'middleware' => []
 ];
