@@ -1,11 +1,14 @@
 {
     "name": "dnt/translate",
     "type": "module",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "DNT\\Translate\\": "src/"
         }
     },
+    "minimum-stability": "beta",
+    "prefer-stable": true,
     "autoload-dev": {
         "psr-4": {
             "DNT\\Translate\\Tests\\": "tests/"
