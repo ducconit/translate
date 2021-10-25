@@ -24,7 +24,7 @@ class LocalizationController extends Controller
             return back()->with('error', __('localization::locator.changeLocaleFail'));
         }
 
-        return back()->with('error', __('localization::locator.changeLocaleSuccess'));
+        return back()->with('message', __('localization::locator.changeLocaleSuccess'));
 
     }
 }
